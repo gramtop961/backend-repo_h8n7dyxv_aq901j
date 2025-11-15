@@ -1,48 +1,66 @@
 """
-Database Schemas
+Database Schemas for School Management App
 
-Define your MongoDB collection schemas here using Pydantic models.
-These schemas are used for data validation in your application.
-
-Each Pydantic model represents a collection in your database.
-Model name is converted to lowercase for the collection name:
-- User -> "user" collection
-- Product -> "product" collection
-- BlogPost -> "blogs" collection
+Each Pydantic model represents a collection in MongoDB.
+The collection name is the lowercase class name.
 """
 
 from pydantic import BaseModel, Field
-from typing import Optional
+from typing import Optional, List
+import datetime as dt
 
-# Example schemas (replace with your own):
 
-class User(BaseModel):
-    """
-    Users collection schema
-    Collection name: "user" (lowercase of class name)
-    """
+class Student(BaseModel):
     name: str = Field(..., description="Full name")
-    email: str = Field(..., description="Email address")
-    address: str = Field(..., description="Address")
-    age: Optional[int] = Field(None, ge=0, le=120, description="Age in years")
-    is_active: bool = Field(True, description="Whether user is active")
+    roll_no: str = Field(..., description="Roll number or ID")
+    class_name: str = Field(..., description="Class/Grade, e.g., 6A")
+    section: Optional[str] = Field(None, description="Optional section")
 
-class Product(BaseModel):
-    """
-    Products collection schema
-    Collection name: "product" (lowercase of class name)
-    """
-    title: str = Field(..., description="Product title")
-    description: Optional[str] = Field(None, description="Product description")
-    price: float = Field(..., ge=0, description="Price in dollars")
-    category: str = Field(..., description="Product category")
-    in_stock: bool = Field(True, description="Whether product is in stock")
 
-# Add your own schemas here:
-# --------------------------------------------------
+class Note(BaseModel):
+    subject: str = Field(...)
+    title: str = Field(...)
+    content: str = Field(...)
+    class_name: str = Field(...)
 
-# Note: The Flames database viewer will automatically:
-# 1. Read these schemas from GET /schema endpoint
-# 2. Use them for document validation when creating/editing
-# 3. Handle all database operations (CRUD) directly
-# 4. You don't need to create any database endpoints!
+
+class Assignment(BaseModel):
+    subject: str = Field(...)
+    title: str = Field(...)
+    description: str = Field(...)
+    due_date: dt.date = Field(...)
+    class_name: str = Field(...)
+
+
+class Worksheet(BaseModel):
+    subject: str = Field(...)
+    title: str = Field(...)
+    description: Optional[str] = Field(None)
+    class_name: str = Field(...)
+
+
+class Circular(BaseModel):
+    title: str
+    message: str
+    audience: str = Field(..., description="e.g., all, teachers, class-6A")
+
+
+class Event(BaseModel):
+    title: str
+    date: dt.date
+    location: Optional[str] = None
+    description: Optional[str] = None
+
+
+class Attendance(BaseModel):
+    student_id: str = Field(..., description="Reference to student _id")
+    date: dt.date = Field(...)
+    status: str = Field(..., description="present/absent")
+
+
+class Upload(BaseModel):
+    filename: str
+    path: str
+    uploaded_by: str = Field(..., description="teacher name or id")
+    subject: Optional[str] = None
+    class_name: Optional[str] = None
